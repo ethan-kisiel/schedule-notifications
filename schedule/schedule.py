@@ -2,6 +2,7 @@ from numpy import array
 import openpyxl, smtplib, ssl
 from datetime import datetime
 from email.message import EmailMessage
+
 class Schedule:
     '''
     '''
@@ -57,10 +58,11 @@ class Schedule:
             return False
         elif int(current_time[0]) != int(time[0]):
             return False
-        elif int(current_time[1]) + buffer <= int(time[1]) and int(current_time[1]) >= int(time[1]) - buffer:
+        elif int(current_time[1]) <= int(time[1]) and int(current_time[1]) >= int(time[1]) - buffer:
             return True
         else:
             return False
+
     def get_day(self):
         today = datetime.today().weekday()
         return self.schedule_data[self.days[today]]
@@ -71,35 +73,30 @@ class Schedule:
         '''
         self.mailer_email = mailer[0]
         mailer_password = mailer[1]
-        
+
         if context is None:
             context = ssl.create_default_context()
         if port is None:
-            port = 587
+            port = 465
 
         try:
-            server = smtplib.SMTP(smtp_server, port)
-            server.ehlo()
-            server.starttls(context=context)
-            server.ehlo()
+            server = smtplib.SMTP_SSL(smtp_server, port)
             server.login(self.mailer_email, mailer_password)
             return server
         
         except Exception as e:
             print(e)
-
-    def end_mail_server(server):
-        server.quit()
     
     def send_notification(self, server, recipient: str, subject: str, body: str):
         '''
         '''
         try:
             msg = EmailMessage()
+            msg.set_content(body)
             msg['Subject'] = subject
-            msg['Message'] = body
             server.send_message(msg, self.mailer_email, recipient)
             server.quit()
-          
+            print('Message sent')
+
         except Exception as e:
             print(e)
