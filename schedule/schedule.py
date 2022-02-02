@@ -1,12 +1,11 @@
-from numpy import array
-import openpyxl, smtplib, ssl
+import openpyxl
 from datetime import datetime
-from email.message import EmailMessage
+from twilio.rest import Client
 
 class Schedule:
     '''
     '''
-    def __init__(self, schedule: str, limits: array):
+    def __init__(self, schedule: str, limits):
         self.schedule = schedule
         self.schedule_data = self.get_data(*limits)
         self.days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -67,36 +66,17 @@ class Schedule:
         today = datetime.today().weekday()
         return self.schedule_data[self.days[today]]
     
-    def start_mail_server(self, smtp_server: str, mailer: array, context=None, port: int=None):
+    def send_notification(self, twilio_sid, twilio_auth, to_number, from_number, msg):
         '''
-        Starts SMTP server instance via given smtp_server, mailer[email, password], and context
-        '''
-        self.mailer_email = mailer[0]
-        mailer_password = mailer[1]
-
-        if context is None:
-            context = ssl.create_default_context()
-        if port is None:
-            port = 465
-
-        try:
-            server = smtplib.SMTP_SSL(smtp_server, port)
-            server.login(self.mailer_email, mailer_password)
-            return server
-        
-        except Exception as e:
-            print(e)
-    
-    def send_notification(self, server, recipient: str, subject: str, body: str):
-        '''
+        Takes twilio account sid, twilio authentication token, target number, twilio number, message body
         '''
         try:
-            msg = EmailMessage()
-            msg.set_content(body)
-            msg['Subject'] = subject
-            server.send_message(msg, self.mailer_email, recipient)
-            server.quit()
-            print('Message sent')
+            client = Client(twilio_sid, twilio_auth)
+            message = client.messages.create(
+                to=to_number,
+                from_=from_number,
+                body=msg
+            )
 
         except Exception as e:
             print(e)
