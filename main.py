@@ -20,4 +20,5 @@ if __name__ == '__main__':
             if new_schedule.compare_time(slot, 5):
                 msg = f'({slot}) {new_schedule.get_day()[slot]}'
                 new_schedule.send_notification(TWILIO_SID, TWILIO_AUTH, RECIPIENT_NUMBER, TWILIO_NUMBER, msg)
+                print('Sent Message')
                 time.sleep(600)
