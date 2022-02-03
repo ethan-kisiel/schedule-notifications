@@ -1,5 +1,6 @@
 from schedule import Schedule
 import time, os, environ_vars
+from datetime import datetime
 os.environ['SENDER_EMAIL'] = 'notifications.sms.sender@gmail.com'
 os.environ['PASSWORD'] = 'm4t7zmaWhQAFs4j'
 os.environ['SMTP_SERVER'] = 'smtp.gmail.com'
@@ -20,5 +21,7 @@ if __name__ == '__main__':
             if new_schedule.compare_time(slot, 5):
                 msg = f'({slot}) {new_schedule.get_day()[slot]}'
                 new_schedule.send_notification(TWILIO_SID, TWILIO_AUTH, RECIPIENT_NUMBER, TWILIO_NUMBER, msg)
-                print('Sent Message')
+                
+                current_time = new_schedule.convert_time(datetime.now().strftime('%H:%M'))
+                print(f'Sent Message at {current_time}')
                 time.sleep(600)
