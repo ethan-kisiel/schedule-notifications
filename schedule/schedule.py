@@ -56,7 +56,7 @@ class Schedule:
         if current_time[2] != time[2]:
             return False
         elif int(time[0]) - int(current_time[0]) == 1 and int(current_time[1]) >= int(time[1] + (60 - buffer)):
-            return False
+            return True
         elif int(current_time[1]) <= int(time[1]) and int(current_time[1]) >= int(time[1]) - buffer:
             return True
         else:
