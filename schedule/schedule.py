@@ -60,6 +60,7 @@ class Schedule:
         if curr_time is not None:
             current_time = curr_time.split(':')
         time = time.split(':')
+        
         target_hour = int(time[0])
         target_minute = int(time[1])
         target_cycle = time[2]
