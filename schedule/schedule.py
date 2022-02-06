@@ -39,25 +39,41 @@ class Schedule:
         time = str(time).split(':')
         if len(time) > 2:
             time.pop(2)
-        if int(time[0]) > 12:
+        if int(time[0]) == 24:
+            time[0] = str(int(time[0]) - 12)
+            return(f'{time[0]}:{time[1]}:AM')
+        elif int(time[0]) == 12:
+            return(f'{time[0]}:{time[1]}:PM')
+        elif int(time[0]) > 12:
             time[0] = str(int(time[0]) - 12)
             return(f'{time[0]}:{time[1]}:PM')
         else:
             return(f'{time[0]}:{time[1]}:AM')
 
-    def compare_time(self, time: str, buffer: int):
+    def compare_time(self, time: str, buffer: int, curr_time: str=None):
         '''
         Takes time in the format of HH:MM:AM/PM
         returns true if time is within buffer(minutes) of current time
         '''
         current_time = datetime.now()
         current_time = self.convert_time(current_time.strftime('%H:%M')).split(':')
+        if curr_time is not None:
+            current_time = curr_time.split(':')
         time = time.split(':')
-        if current_time[2] != time[2]:
+        target_hour = int(time[0])
+        target_minute = int(time[1])
+        target_cycle = time[2]
+        current_hour = int(current_time[0])
+        current_minute = int(current_time[1])
+        current_cycle = current_time[2]
+        
+        if current_cycle == target_cycle and current_hour - target_hour == 11:
+            target_hour = 13 # hack for transition from 12 -> 1 edgecase
+        if current_cycle != target_cycle and target_hour - current_hour != 1:
             return False
-        elif int(time[0]) - int(current_time[0]) == 1 and int(current_time[1]) >= int(time[1] + (60 - buffer)):
-            return False
-        elif int(current_time[1]) <= int(time[1]) and int(current_time[1]) >= int(time[1]) - buffer:
+        elif target_hour - current_hour == 1 and current_minute >= target_minute + (60 - buffer):
+            return True
+        elif current_minute <= target_minute and current_minute >= target_minute - buffer:
             return True
         else:
             return False
