@@ -1,4 +1,4 @@
-import openpyxl
+import openpyxl, time
 from datetime import datetime
 from twilio.rest import Client
 
@@ -81,7 +81,10 @@ class Schedule:
 
     def get_day(self):
         today = datetime.today().weekday()
-        return self.schedule_data[self.days[today]]
+        try:
+            return self.schedule_data[self.days[today]]
+        except KeyError:
+            print(self.schedule_data)
     
     def send_notification(self, twilio_sid, twilio_auth, to_number, from_number, msg):
         '''

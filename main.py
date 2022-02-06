@@ -7,7 +7,7 @@ os.environ['SMTP_SERVER'] = 'smtp.gmail.com'
 os.environ['RECIPIENT_EMAIL'] = '8146556090@vtext.com'
 
 if __name__ == '__main__':
-    limits = [4,2, 3, 9, 5, 52]
+    limits = [4,2, 3, 10, 5, 52]
     new_schedule = Schedule('Schedule.xlsx', limits)
 
     TWILIO_SID = os.environ.get('TWILIO_SID')
