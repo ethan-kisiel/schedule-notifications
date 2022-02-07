@@ -1,20 +1,19 @@
 from schedule import Schedule
 import time, os, environ_vars
-from datetime import datetime
-os.environ['SENDER_EMAIL'] = 'notifications.sms.sender@gmail.com'
-os.environ['PASSWORD'] = 'm4t7zmaWhQAFs4j'
-os.environ['SMTP_SERVER'] = 'smtp.gmail.com'
-os.environ['RECIPIENT_EMAIL'] = '8146556090@vtext.com'
+from datetime import time, datetime
 
 if __name__ == '__main__':
-    limits = [4,2, 3, 10, 5, 52]
-    new_schedule = Schedule('Schedule.xlsx', limits)
+    SCHEDULE = os.environ.get('SCHEDULE')
 
     TWILIO_SID = os.environ.get('TWILIO_SID')
     TWILIO_AUTH = os.environ.get('TWILIO_AUTH')
     TWILIO_NUMBER = os.environ.get('TWILIO_NUMBER')
     
     RECIPIENT_NUMBER = os.environ.get('RECIPIENT_NUMBER')
+    
+    limits = [4,2, 3, 10, 5, 52]
+    new_schedule = Schedule(SCHEDULE, limits)
+
     
     while True:
         for slot in new_schedule.get_day():

@@ -1,4 +1,4 @@
-import openpyxl, time
+import openpyxl
 from datetime import datetime
 from twilio.rest import Client
 
@@ -36,11 +36,12 @@ class Schedule:
         Takes datetime.time
         returns string in 12 hour format
         '''
+        
         time = str(time).split(':')
         if len(time) > 2:
             time.pop(2)
-        if int(time[0]) == 24:
-            time[0] = str(int(time[0]) - 12)
+        if int(time[0]) == 0:
+            time[0] = '12'
             return(f'{time[0]}:{time[1]}:AM')
         elif int(time[0]) == 12:
             return(f'{time[0]}:{time[1]}:PM')
@@ -48,33 +49,34 @@ class Schedule:
             time[0] = str(int(time[0]) - 12)
             return(f'{time[0]}:{time[1]}:PM')
         else:
-            return(f'{time[0]}:{time[1]}:AM')
+            return(f'{int(time[0])}:{time[1]}:AM')
 
     def compare_time(self, time: str, buffer: int, curr_time: str=None):
         '''
         Takes time in the format of HH:MM:AM/PM
         returns true if time is within buffer(minutes) of current time
         '''
+
         current_time = datetime.now()
         current_time = self.convert_time(current_time.strftime('%H:%M')).split(':')
         if curr_time is not None:
             current_time = curr_time.split(':')
         time = time.split(':')
-        
+
         target_hour = int(time[0])
         target_minute = int(time[1])
         target_cycle = time[2]
         current_hour = int(current_time[0])
         current_minute = int(current_time[1])
         current_cycle = current_time[2]
-        
+
         if current_cycle == target_cycle and current_hour - target_hour == 11:
             target_hour = 13 # hack for transition from 12 -> 1 edgecase
         if current_cycle != target_cycle and target_hour - current_hour != 1:
             return False
         elif target_hour - current_hour == 1 and current_minute >= target_minute + (60 - buffer):
             return True
-        elif current_minute <= target_minute and current_minute >= target_minute - buffer:
+        elif current_hour == target_hour and current_minute <= target_minute and current_minute >= target_minute - buffer:
             return True
         else:
             return False
@@ -85,7 +87,7 @@ class Schedule:
             return self.schedule_data[self.days[today]]
         except KeyError:
             print(self.schedule_data)
-    
+
     def send_notification(self, twilio_sid, twilio_auth, to_number, from_number, msg):
         '''
         Takes twilio account sid, twilio authentication token, target number, twilio number, message body
