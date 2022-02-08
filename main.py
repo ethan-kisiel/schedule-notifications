@@ -1,6 +1,7 @@
 from schedule import Schedule
-import time, os, environ_vars
-from datetime import time, datetime
+import os, environ_vars
+from datetime import datetime
+from time import sleep
 
 if __name__ == '__main__':
     SCHEDULE = os.environ.get('SCHEDULE')
@@ -23,4 +24,4 @@ if __name__ == '__main__':
                 
                 current_time = new_schedule.convert_time(datetime.now().strftime('%H:%M'))
                 print(f'Sent Message at {current_time}')
-                time.sleep(600)
+                sleep(600)
