@@ -69,14 +69,27 @@ class Schedule:
         current_hour = int(current_time[0])
         current_minute = int(current_time[1])
         current_cycle = current_time[2]
-
+        
         if current_cycle == target_cycle and current_hour - target_hour == 11:
             target_hour = 13 # hack for transition from 12 -> 1 edgecase
-        if current_cycle != target_cycle and target_hour - current_hour != 1:
+        if target_hour == 12:
+            if current_cycle == target_cycle and current_hour == target_hour:
+                if target_minute - current_minute <= buffer:
+                    return True
+                else:
+                    return False
+            else:
+                if current_cycle == target_cycle:
+                    return False
+                elif target_hour - current_hour == 1 and current_minute >= target_minute + (60-buffer):
+                    return True
+                else:
+                    return False
+        elif current_cycle != target_cycle:
             return False
         elif target_hour - current_hour == 1 and current_minute >= target_minute + (60 - buffer):
             return True
-        elif current_hour == target_hour and current_minute <= target_minute and current_minute >= target_minute - buffer:
+        elif current_hour == target_hour and target_minute - current_minute <= buffer:
             return True
         else:
             return False
