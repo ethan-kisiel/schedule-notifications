@@ -74,7 +74,7 @@ class Schedule:
             target_hour = 13 # hack for transition from 12 -> 1 edgecase
         if target_hour == 12:
             if current_cycle == target_cycle and current_hour == target_hour:
-                if target_minute - current_minute <= buffer:
+                if target_minute - current_minute <= buffer and target_minute > current_minute:
                     return True
                 else:
                     return False
@@ -89,8 +89,11 @@ class Schedule:
             return False
         elif target_hour - current_hour == 1 and current_minute >= target_minute + (60 - buffer):
             return True
-        elif current_hour == target_hour and 0 < target_minute - current_minute <= buffer:
-            return True
+        elif current_hour == target_hour and target_minute - current_minute <= buffer:
+            if current_minute > target_minute:
+                return False
+            else:
+                return True
         else:
             return False
 

@@ -57,4 +57,9 @@ def test_compare_time():
     target_time = test_schedule.convert_time(time(9,00))
     current_time = test_schedule.convert_time(time(9,5))
     assert test_schedule.compare_time(target_time, 5, current_time) == False
+
+    #12:55 pm current and 12:30 target time == False
+    target_time = test_schedule.convert_time(time(12,30))
+    current_time = test_schedule.convert_time(time(12,55))
+    assert test_schedule.compare_time(target_time, 5, current_time) == False
     
