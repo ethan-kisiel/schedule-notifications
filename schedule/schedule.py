@@ -89,7 +89,7 @@ class Schedule:
             return False
         elif target_hour - current_hour == 1 and current_minute >= target_minute + (60 - buffer):
             return True
-        elif current_hour == target_hour and target_minute - current_minute <= buffer:
+        elif current_hour == target_hour and 0 < target_minute - current_minute <= buffer:
             return True
         else:
             return False
@@ -112,6 +112,5 @@ class Schedule:
                 from_=from_number,
                 body=msg
             )
-
         except Exception as e:
             print(e)
